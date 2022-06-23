@@ -1,0 +1,83 @@
+version: '3'
+services:
+
+  consul:
+    image: consul
+    
+  apigateway:
+    build: ./api-gateway
+    ports:
+    - "8080:8080"
+    depends_on:
+      - "consul"
+       
+  enigmi:
+     build: ./enigmi
+     depends_on:
+       - "consul"
+     depends_on:
+       - "postgres-enigmi"
+     depends_on:
+       - "kafka"
+
+  connessioni:
+     build: ./connessioni
+     depends_on:
+      - "consul"
+     depends_on:
+       - "postgres-connessioni"
+     depends_on:
+       - "kafka"
+        
+  enigmi-seguiti:
+    build: ./enigmi-seguiti
+    depends_on:
+      - "consul"
+    depends_on:
+       - "postgres-enigmi-seguiti"
+    depends_on:
+       - "kafka"
+     
+  postgres-enigmi:
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: enigmi
+      
+  postgres-connessioni:
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: connessioni
+   
+  postgres-enigmi-seguiti:
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: enigmi-seguiti
+      
+  zookeeper:
+    image: bitnami/zookeeper:latest
+    ports:
+      - "2181:2181"
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+  kafka:
+    image: bitnami/kafka:latest
+    depends_on:
+      - "zookeeper"
+    ports:
+      - "9092:9092"
+    environment:
+      - KAFKA_BROKER_ID=1
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+#      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://10.11.121:9092
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=false
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock

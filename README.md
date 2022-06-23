@@ -1,6 +1,6 @@
 # EDIPOGRAM
 
-Progetto del corso di Analisi e progettazione del software per l'anno accademico 2021-2022. 
+Progetto del corso di Analisi e progettazione del software per l'anno accademico 2021-2022 svolto da Andrea Mariani e Gianluca Mariani.
 
 
 ## Descrizione di questo progetto 
@@ -57,9 +57,13 @@ L'applicazione *Edipogram* è composta dai seguenti microservizi:
 
 Per eseguire questo progetto: 
 
-* avviare *Consul* eseguendo lo script `start-consul.sh` 
+* per la build del progetto eseguire il comando `gradle build`
+
+* per la build delle immagini eseguire lo script `build-docker-images.sh` 
 
 * per avviare l'applicazione *Edipogram*, eseguire lo script `run-edipogram.sh` 
+
+* per creare i topic eseguire lo script `create-some-kafka-topics.sh` (è possibile vedere i topic creati eseguendo lo script `list-kafka-topics.sh`). Si è deciso di creare topic con due partizioni, in questo modo, avendo avviato due istanze del servizio enigmi-seguiti con lo stesso *group-id*, Kafka assegna a ciascun consumatore del gruppo una partizione. Se invece si fosse creata un'unica partizione, questa sarebbe stata assegnata ad un solo consumatore del gruppo, e quindi non si sarebbero sfruttate le diverse istanze del servizio.
 
 * per inizializzare le basi di dati con dei dati di esempio, eseguire gli script `do-init-enigmi.sh` e `do-init-connessioni.sh` 
 
@@ -90,11 +94,4 @@ Ed inoltre:
 
 * lo script `do-post-altre-connessioni.sh` aggiunge nuove connessioni 
 
-Alla fine, l'applicazione può essere arrestata usando lo script `kill-java-processes.sh` (**da usare con cautela!**). 
-
-Inoltre, *Consul* può essere arrestato con lo script `stop-consul.sh`. 
-
-
-## Descrizione delle attività da svolgere 
-
-Si veda la descrizione del progetto sul sito web del corso di [Architettura dei sistemi software](http://cabibbo.dia.uniroma3.it/asw/).
+Alla fine, l'applicazione può essere arrestata usando lo script `stop-edipogram.sh`. 

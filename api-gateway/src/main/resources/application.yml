@@ -5,7 +5,7 @@ spring:
     name: apigateway
   cloud:
     consul:
-      host: localhost
+      host: consul
       port: 8500
       discovery: 
         instanceId: ${spring.application.name}-${spring.cloud.client.hostname}-${random.value}
@@ -59,4 +59,4 @@ logging:
     root: INFO
     org.springframework.web: INFO
     org.springframework.web.HttpLogging: INFO
-    org.springframework.cloud.gateway: INFO
+    org.springframework.cloud.gateway: TRACE

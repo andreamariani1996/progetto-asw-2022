@@ -5,7 +5,7 @@ spring:
     name: enigmi
   cloud:
     consul:
-      host: localhost
+      host: consul
       port: 8500
       discovery: 
         instanceId: ${spring.application.name}-${spring.cloud.client.hostname}-${random.value}
@@ -18,6 +18,32 @@ spring:
         queryPassing: true 
     loadbalancer: 
       ribbon.enabled: false 
+  jpa:
+    database: POSTGRESQL
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+      use-new-id-generator-mappings: true
+  datasource:
+    platform: postgres
+    url: jdbc:postgresql://postgres-enigmi:5432/enigmi
+    username: postgres
+    password: postgres
+    driverClassName: org.postgresql.Driver
+  kafka:
+    bootstrap-servers: kafka:9092  
+    consumer:
+      bootstrap-servers: kafka:9092
+      group-id: ${spring.application.name}
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+          spring.json.trusted.packages: "*"
+    producer:
+      bootstrap-servers: kafka:9092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 
 server: 
   port: ${PORT:${SERVER_PORT:0}}

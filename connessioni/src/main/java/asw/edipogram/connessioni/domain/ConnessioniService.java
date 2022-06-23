@@ -1,11 +1,10 @@
 package asw.edipogram.connessioni.domain;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import asw.edipogram.common.api.event.DomainEvent;
+import asw.edipogram.connessioneservice.api.event.ConnessioneCreatedEvent;
 
-import java.util.logging.Logger; 
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*; 
 
 @Service
@@ -13,10 +12,14 @@ public class ConnessioniService {
 
 	@Autowired
 	private ConnessioniRepository connessioniRepository;
+	@Autowired
+	private ConnessioniDomainEventPublisher domainEventPublisher;
 
  	public Connessione createConnessione(String utente, String tipo) {
 		Connessione connessione = new Connessione(utente, tipo); 
 		connessione = connessioniRepository.save(connessione);
+		DomainEvent event = new ConnessioneCreatedEvent(connessione.getId(), connessione.getUtente(), connessione.getTipo());
+		domainEventPublisher.publish(event);
 		return connessione;
 	}
 
